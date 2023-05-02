@@ -78,7 +78,11 @@ func init() {
 }
 
 func main() {
-	ctx := context.Background()
+	// ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+
+	// due to defer cancel() this will be called when the program terminates
+	defer cancel() // cancel when we are finished sending email prevents memory leak
 
 	config := &oauth2.Config{
 		ClientID:     os.Getenv("CLIENT_ID"),
@@ -104,6 +108,7 @@ func main() {
 
 	if err != nil {
 		log.Fatalf("Unable to send mail: %v", err)
+		// would suggest using log.Println instead of log.Fatalf as will not terminate the program
 	}
 
 }
